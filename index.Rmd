@@ -1,0 +1,96 @@
+---
+title: "R Markdown Presentation and Plotly"
+author: "Sukhovei Mikhail"
+date: "16 07 2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+library(plotly)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Motor Trend Car Road Tests
+
+The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
+
+```{r}
+head(mtcars)
+```
+
+## Scatterplot Matrix (SPLOM)
+
+```{r}
+pl_colorscale = list(
+    c(0.0, '#119dff'), c(0.5, '#119dff'), c(0.5, '#ef553b'), c(1, '#ef553b')
+)
+
+axis = list(
+    showline = FALSE, zeroline = FALSE, gridcolor = '#ffff', ticklen = 4,
+    titlefont = list(size = 13)
+)
+
+fig <- mtcars %>% plot_ly() 
+
+fig <- fig %>%
+    add_trace(
+        type = 'splom',
+        dimensions = list(
+            list(label='Miles/gallon', values=~mpg),
+            list(label='Displacement', values=~disp),
+            list(label='Power', values=~hp),
+            list(label='Rear axle ratio', values=~drat),
+            list(label='Weight', values=~wt),
+            list(label='1/4 mile time', values=~qsec)
+        ),
+        text=~factor(am, labels=c("automatic", "manual")),
+        diagonal=list(visible=FALSE),
+        marker = list(
+            color = ~am,
+            colorscale = pl_colorscale,
+            size = 5,
+            line = list(
+                width = 1,
+                color = 'rgb(230,230,230)'
+            )
+        )
+    )
+
+fig <- fig %>%
+    layout(
+        title = "Motor Trend Car Road Tests<br>Data source: <a href='https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/mtcars'>[1]</a>",
+        hovermode='closest',
+        dragmode = 'select',
+        plot_bgcolor='rgba(240,240,240, 0.95)',
+        xaxis=list(
+            domain=NULL, showline=F, zeroline=F, gridcolor='#ffff', ticklen=4,
+            titlefont=list(size=13)
+        ),
+        yaxis=list(
+            domain=NULL, showline=F, zeroline=F, gridcolor='#ffff', ticklen=4,
+            titlefont=list(size=13)
+        ),
+        xaxis2=axis,
+        xaxis3=axis,
+        xaxis4=axis,
+        xaxis5=axis,
+        xaxis6=axis,
+        yaxis2=axis,
+        yaxis3=axis,
+        yaxis4=axis,
+        yaxis5=axis,
+        yaxis6=axis
+)
+
+fig <- fig %>% style(showupperhalf = F)
+
+fig
+```
+
+## Scatter3D
+
+```{r, warning=FALSE}
+data <- mtcars
+plot_ly(mtcars, x=~hp, y=~wt, z=~mpg, color=~factor(am),
+        type = "scatter3d", mode = "markers")
+```
